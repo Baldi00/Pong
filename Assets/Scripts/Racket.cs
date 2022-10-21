@@ -38,7 +38,7 @@ public class Racket : MonoBehaviour
             {
                 Vector2 newPosition = new Vector2(
                     currentPosition.x,
-                    currentPosition.y + speed * Time.fixedDeltaTime);
+                    currentPosition.y + speed * Time.deltaTime);
                 rigidbody2d.MovePosition(newPosition);
                 remainingMovingFrames = movingFramesTreshold;
                 _movingDirection = 1;
@@ -51,7 +51,7 @@ public class Racket : MonoBehaviour
             {
                 Vector2 newPosition = new Vector2(
                     currentPosition.x,
-                    currentPosition.y - speed * Time.fixedDeltaTime);
+                    currentPosition.y - speed * Time.deltaTime);
                 rigidbody2d.MovePosition(newPosition);
                 remainingMovingFrames = movingFramesTreshold;
                 _movingDirection = -1;

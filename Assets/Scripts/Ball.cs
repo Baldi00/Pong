@@ -33,7 +33,7 @@ public class Ball : MonoBehaviour
     void Update()
     {
         Vector3 direction = (Vector3)(Quaternion.Euler(0, 0, angle) * Vector3.right);
-        Vector2 newPosition = transform.position + speed * Time.fixedDeltaTime * direction;
+        Vector2 newPosition = transform.position + speed * Time.deltaTime * direction;
         rigidbody2d.MovePosition(newPosition);
     }
 

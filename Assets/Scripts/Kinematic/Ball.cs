@@ -8,6 +8,7 @@ public class Ball : MonoBehaviour
     public float speed;
     private bool _isTouchingLeftCollider = false;
     private bool _isTouchingRightCollider = false;
+    private Vector3 direction;
 
     public bool IsTouchingLeftCollider
     {
@@ -32,52 +33,34 @@ public class Ball : MonoBehaviour
 
     void Update()
     {
-        Vector3 direction = (Vector3)(Quaternion.Euler(0, 0, angle) * Vector3.right);
+        direction = (Vector3)(Quaternion.Euler(0, 0, angle) * Vector3.right);
         Vector2 newPosition = transform.position + speed * Time.deltaTime * direction;
         rigidbody2d.MovePosition(newPosition);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        Vector3 outDirection = Vector3.Reflect(direction, collision.contacts[0].normal);
+        float outAngle = Vector3.SignedAngle(Vector3.right, outDirection, Vector3.forward);
+
         string colliderName = collision.gameObject.name;
-        if (colliderName.Equals("ColliderUp") || colliderName.Equals("ColliderDown"))
+        switch (colliderName)
         {
-            angle = -angle;
-            SoundManager.Instance.PlayBoing();
-        }
-        else if (colliderName.Equals("LeftRacket"))
-        {
-            Racket racket = collision.gameObject.GetComponent<Racket>();
-            if (racket.MovingDirection == -1)
-                angle = 315 + Random.Range(10f, 30f);
-            else if (racket.MovingDirection == 1)
-                angle = 45 - Random.Range(10f, 30f);
-            else
-                angle = 180 - angle + Random.Range(-5f, 5f);
-
-            SoundManager.Instance.PlayBoing();
-        }
-        else if (colliderName.Equals("RightRacket"))
-        {
-            Racket racket = collision.gameObject.GetComponent<Racket>();
-            if (racket.MovingDirection == -1)
-                angle = 225 - Random.Range(10f, 30f);
-            else if (racket.MovingDirection == 1)
-                angle = 135 + Random.Range(10f, 30f); 
-            else
-                angle = 180 - angle + Random.Range(-5f, 5f);
-
-            SoundManager.Instance.PlayBoing();
-        }
-        else if (colliderName.Equals("ColliderLeft"))
-        {
-            _isTouchingLeftCollider = true;
-            enabled = false;
-        }
-        else if (colliderName.Equals("ColliderRight"))
-        {
-            _isTouchingRightCollider = true;
-            enabled = false;
+            case "ColliderUp":
+            case "ColliderDown":
+            case "LeftRacket":
+            case "RightRacket":
+                angle = outAngle;
+                SoundManager.Instance.PlayBoing();
+                break;
+            case "ColliderLeft":
+                _isTouchingLeftCollider = true;
+                enabled = false;
+                break;
+            case "ColliderRight":
+                _isTouchingRightCollider = true;
+                enabled = false;
+                break;
         }
     }
 
